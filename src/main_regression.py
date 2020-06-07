@@ -39,7 +39,7 @@ def validate(model, device, val_loader, optimizer, mode: str="Eval"):
             """
             output = model(x_batch)
             
-            val_mse += F.mse_loss(output, y_batch).item()
+            val_mse += F.mse_loss(output, y_batch, reduction="sum").item()
     val_mse = val_mse / len(val_loader.dataset)
     print("\n{} Average MSE: {}".format(mode, val_mse))
     
@@ -177,7 +177,7 @@ def main():
             def closure():
                 optimizer.zero_grad()
                 output = model(x_batch)
-                loss = F.mse_loss(output, y_batch).float()
+                loss = F.mse_loss(output, y_batch, reduction="sum").float()
                 loss.backward()
                 
                 return loss, output
