@@ -16,15 +16,14 @@
 
 ## How to run.
 
-
-* Setup (TODO)
+* (nvidia-docker) Setup
 
 ```
-$ 
+$ docker build -t bnns:0.1 .
+$ docker run --rm --gpus all -it bnns:0.1 /bin/bash
 ```
 
-
-* Classification
+* Classification (CIFAR-10)
 
 ```
 $ python src/main_classification.py --download True --config <path/to/config>
@@ -39,7 +38,7 @@ $ python src/main_regression.py --config <path/to/config> --log_name hoge
 or 
 
 ```
-$ python src/main_regression.py --optim_name <optimizer object name> --log_name hoeg
+$ python src/main_regression.py --optim_name <optimizer object name> --log_name hoge
 ```
 
 
