@@ -163,8 +163,7 @@ def main():
         scheduler_kwargs = config["scheduler_args"]
         scheduler = scheduler_class(optimizer, **scheduler_kwargs)
     
-    # log_file_name = "log_" + args.config.split("/")[-1].split(".")[0]
-    log_file_name = "log_" + "sgld"
+    log_file_name = "log_" + args.log_name
     logger = Logger(args.out, log_file_name)
     logger.start()
     # train
@@ -204,7 +203,7 @@ def main():
         logger.write(log)
         
         if i % args.checkpoint_interval == 0 or i + 1 == args.epochs:
-            path = os.path.join(args.out, "epoch{}_{}.ckpt".format(i+1, "sgld"))
+            path = os.path.join(args.out, "epoch{}_{}.ckpt".format(i+1, args.log_name))
             data = {"model": model.state_dict(),
                     "optimizer": optimizer.state_dict(),
                     "epoch": i + 1}

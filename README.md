@@ -1,46 +1,57 @@
 # Experiments on Bayesian Neural Networks and their uncertainies.
 
+## Experiments
+* Classification (CIFAR-10, ImageNet, etc...)
+* Regression (UCI 3D Road data)
+
 ## Algorithms
-* Monte-Carlo Dropout (MC Dropout)
+* Adam
 * Stochastic Gradient Langevin Dynamics (SGLD)
 * preconditioned Stochastic Gradient Langevin Dynamics (pSGLD)
 * Stochastic Gradient Hamiltonian Monte Carlo (SGHMC)
-* Variational Online Gauss Newton (VOGN)
 * Kronecker-Factored Approximate Curvature (KFAC)
 * noisy KFAC
-* Stochastic Weight Averaging (SWA)
-* SWA-Gaussian (SWAG)
-
-
-## Dataset
-* ImageNet
-* CIFAR-10
-* STL-10
-* UCI 3D Road data
+* Variational Online Gauss Newton (VOGN)
 
 
 ## How to run.
 
-```
+
+* Setup (TODO)
 
 ```
+$ 
+```
 
-## 実験の全体像
-* データセットを用意し、動かせるところまでいく。
-* 元論文＋周辺論文を読む。
-* 各データセットにおける実験で比較したい評価指標を明らかにし、それを求める。
-  * 現在だと、Toy(回帰)で不確実性表示、回帰(3droad.mat)、分類(CIFAR-10)
-  * 適宜必要ならばプロットや表にまとめる。
-  * 今考えているのは、
-    * 回帰モデルにおける2乗誤差と不確実性。不確実性と誤差が相関していると嬉しい。
-    * 分類モデルにおける分類精度。さらに、分類問題において不確実性はどういうふうに得られるのかを知りたい。
-* READMEに実行手順とDockerでの実行方法をまとめ、誰でもすぐに実行できるようにする。
+
+* Classification
+
+```
+$ python src/main_classification.py --download True --config <path/to/config>
+```
+
+* Regression (UCI 3D Road data) 
+
+```
+$ python src/main_regression.py --config <path/to/config> --log_name hoge
+``` 
+
+or 
+
+```
+$ python src/main_regression.py --optim_name <optimizer object name> --log_name hoeg
+```
 
 
 ## Reference
 
 ### Papers 
-
+* [Bayesian Learning via Stochastic Gradient Langevin Dynamics](https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf)
+* [Preconditioned Stochastic Gradient Langevin Dynamics for Deep Neural Networks](https://arxiv.org/abs/1512.07666)
+* [Stochastic Gradient Hamiltonian Monte Carlo](https://arxiv.org/abs/1402.4102)
+* [Noisy Natural Gradient as Variational Inference](https://arxiv.org/abs/1712.02390)
+* [Fast and Scalable Bayesian Deep Learning by Weight-Perturbation in Adam](https://arxiv.org/abs/1806.04854)
+* [Practical Deep Learning with Bayesian Principles](https://arxiv.org/abs/1906.02506)
 
 ### Experimental Codes
 * https://github.com/wjmaddox/swa_gaussian 
