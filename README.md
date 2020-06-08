@@ -5,7 +5,7 @@
 * Regression (UCI 3D Road data)
 
 ## Algorithms
-* Adam
+* Adam (Non-Bayesian)
 * Stochastic Gradient Langevin Dynamics (SGLD)
 * preconditioned Stochastic Gradient Langevin Dynamics (pSGLD)
 * Stochastic Gradient Hamiltonian Monte Carlo (SGHMC)
