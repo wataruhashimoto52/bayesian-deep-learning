@@ -282,7 +282,6 @@ def main():
             module_path = os.path.basename(args.arch_file).replace(ext, '')
         else:
             module_path = '.'.join(args.arch_file.split("/")[1:]).replace(ext, '')
-        print(module_path)
         module = import_module(module_path)
         arch_class = getattr(module, args.arch_name)
 
