@@ -185,8 +185,8 @@ def main():
             loss, _ = optimizer.step(closure=closure)
             losses += loss.item()
             if (minibatch_i + 1) % args.log_interval == 0:
-                print("Train Epoch: {} batch idx: {} MSE: {}".format(
-                    i+1, minibatch_i+1, loss.item() / args.batch_size))
+                print("Train Epoch: {} batch idx: {} elapsed time:  {:.1f}s MSE: {}".format(
+                    i+1, minibatch_i+1, logger.elapsed_time, loss.item() / args.batch_size))
         losses = losses / len(train_loader.dataset)
 
         val_mse = validate(model, device, val_loader, optimizer, "Eval")
