@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from torchsso.optim import SecondOrderOptimizer, VIOptimizer
 from torchsso.utils import Logger
 from torchvision import datasets, transforms
-
+from optimizers import *
 from models import BayesianNeuralNetwork, Net
 
 
@@ -88,6 +88,8 @@ def main():
                         help='dir to save output files')
     parser.add_argument('--config', default='src/configs/regression/vogn.json',
                         help='config file path')
+    parser.add_argument("--log_name", default=None, required=True, type=str,
+                        help="log name")
     args = parser.parse_args()
     dict_args = vars(args)
 
@@ -161,7 +163,8 @@ def main():
         scheduler_kwargs = config["scheduler_args"]
         scheduler = scheduler_class(optimizer, **scheduler_kwargs)
     
-    log_file_name = "log_" + args.config.split("/")[-1].split(".")[0]
+    # log_file_name = "log_" + args.config.split("/")[-1].split(".")[0]
+    log_file_name = "log_" + "sgld"
     logger = Logger(args.out, log_file_name)
     logger.start()
     # train
@@ -201,7 +204,7 @@ def main():
         logger.write(log)
         
         if i % args.checkpoint_interval == 0 or i + 1 == args.epochs:
-            path = os.path.join(args.out, "epoch{}_{}.ckpt".format(i+1, args.config.split("/")[-1].split(".")[0]))
+            path = os.path.join(args.out, "epoch{}_{}.ckpt".format(i+1, "sgld"))
             data = {"model": model.state_dict(),
                     "optimizer": optimizer.state_dict(),
                     "epoch": i + 1}
