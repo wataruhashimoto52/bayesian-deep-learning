@@ -1,4 +1,4 @@
-# Experiments on Bayesian Neural Networks and their uncertainies.
+# Experiments on Inference Algorithms in Bayesian Neural Networks.
 
 ## Experiments
 * Classification (CIFAR-10, ImageNet, etc...)
