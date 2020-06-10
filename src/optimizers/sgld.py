@@ -184,6 +184,8 @@ class pSGLDV2(Optimizer):
         Optimization variable is viewed as a posterior sample under Stochastic
         Gradient Langevin Dynamics with noise rescaled in each dimension
         according to RMSProp.
+        
+        (from https://github.com/automl/pybnn)
     """
 
     def __init__(self,

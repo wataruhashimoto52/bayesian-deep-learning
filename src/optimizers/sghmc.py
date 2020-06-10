@@ -12,6 +12,8 @@ class SGHMC(Optimizer):
         [1] T. Chen, E. B. Fox, C. Guestrin
             In Proceedings of Machine Learning Research 32 (2014).\n
             `Stochastic Gradient Hamiltonian Monte Carlo <https://arxiv.org/pdf/1402.4102.pdf>`_
+            
+        (from https://github.com/automl/pybnn)
     """
 
     def __init__(self,
