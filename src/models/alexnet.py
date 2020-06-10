@@ -6,7 +6,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchsso.utils.accumulator import TensorAccumulator
 
-
 __all__ = ['alexnet', 'alexnet_mcdropout']
 
 
@@ -84,4 +83,3 @@ def alexnet(**kwargs):
 def alexnet_mcdropout(**kwargs):
     model = AlexNetMCDropout(**kwargs)
     return model
-

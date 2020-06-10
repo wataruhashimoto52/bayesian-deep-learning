@@ -18,14 +18,14 @@ from torch.utils.data import DataLoader, TensorDataset
 from torchsso.optim import SecondOrderOptimizer, VIOptimizer
 from torchsso.utils import Logger
 from torchvision import datasets, transforms
-from optimizers import *
-from models import BayesianNeuralNetwork, Net
 
+from models import Net
+from optimizers import *
 
 torch.manual_seed(1234)
 
 
-def validate(model, device, val_loader, optimizer, mode: str="Eval"):
+def validate(model, device, val_loader, optimizer, mode: str = "Eval"):
     model.eval()
     val_mse = 0
     with torch.no_grad():
@@ -38,13 +38,13 @@ def validate(model, device, val_loader, optimizer, mode: str="Eval"):
                 output = model(x_batch)
             """
             output = model(x_batch)
-            
+
             val_mse += F.mse_loss(output, y_batch, reduction="sum").item()
     val_mse = val_mse / len(val_loader.dataset)
     print("\n{} Average MSE: {}".format(mode, val_mse))
-    
+
     return val_mse
-    
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -95,13 +95,12 @@ def main():
 
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
-    
+
     if args.config is not None:
         with open(args.config) as f:
             config = json.load(f)
 
         dict_args.update(config)
-
 
     if not os.path.isfile(args.datapath):
         print('Downloading \'3droad\' UCI dataset...')
@@ -112,13 +111,13 @@ def main():
     X = X - X.min(0)[0]
     X = 2 * (X / X.max(0)[0]) - 1
     y = data[:, -1]
-    
+
     train_val_n = int(floor(0.8 * len(X)))
     X_train_val = X[:train_val_n]
     y_train_val = y[:train_val_n]
     X_test = X[train_val_n:, :]
     y_test = y[train_val_n:]
-    
+
     X_train, X_val, y_train, y_val = train_test_split(X_train_val,
                                                       y_train_val,
                                                       test_size=0.2)
@@ -131,13 +130,15 @@ def main():
     y_test = torch.tensor(y[train_val_n:], dtype=dtype, requires_grad=False)
 
     train_dataset = TensorDataset(X_train, y_train)
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+    train_loader = DataLoader(
+        train_dataset, batch_size=args.batch_size, shuffle=True)
     val_dataset = TensorDataset(X_val, y_val)
-    val_loader = DataLoader(val_dataset, batch_size=args.val_batch_size, shuffle=True)
+    val_loader = DataLoader(
+        val_dataset, batch_size=args.val_batch_size, shuffle=True)
     test_dataset = TensorDataset(X_test, y_test)
-    test_loader = DataLoader(test_dataset, batch_size=args.val_batch_size, shuffle=True)
-    
-    
+    test_loader = DataLoader(
+        test_dataset, batch_size=args.val_batch_size, shuffle=True)
+
     data_dim = X_train.size(-1)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Net(data_dim).to(device).float()
@@ -157,12 +158,14 @@ def main():
     if args.scheduler_name is None:
         scheduler = None
     else:
-        scheduler_class = getattr(torchsso.optim.lr_scheduler, args.scheduler_name, None)
+        scheduler_class = getattr(
+            torchsso.optim.lr_scheduler, args.scheduler_name, None)
         if scheduler_class is None:
-            scheduler_class = getattr(torch.optim.lr_scheduler, args.scheduler_name)
+            scheduler_class = getattr(
+                torch.optim.lr_scheduler, args.scheduler_name)
         scheduler_kwargs = config["scheduler_args"]
         scheduler = scheduler_class(optimizer, **scheduler_kwargs)
-    
+
     log_file_name = "log_" + args.log_name
     logger = Logger(args.out, log_file_name)
     logger.start()
@@ -173,17 +176,18 @@ def main():
     for i in range(args.epochs):
         losses = 0
         for minibatch_i, (x_batch, y_batch) in enumerate(train_loader):
-            
+
             x_batch = x_batch.to(device)
             y_batch = y_batch.to(device)
+
             def closure():
                 optimizer.zero_grad()
                 output = model(x_batch)
                 loss = F.mse_loss(output, y_batch, reduction="sum").float()
                 loss.backward()
-                
+
                 return loss, output
-            
+
             loss, _ = optimizer.step(closure=closure)
             losses += loss.item()
             if (minibatch_i + 1) % args.log_interval == 0:
@@ -192,7 +196,7 @@ def main():
         losses = losses / len(train_loader.dataset)
 
         val_mse = validate(model, device, val_loader, optimizer, "Eval")
-        
+
         iteration = (i + 1) * len(train_loader)
         log = {"epoch": i+1,
                "iteration": iteration,
@@ -201,14 +205,15 @@ def main():
                "lr": optimizer.param_groups[0]["lr"],
                "momentum": optimizer.param_groups[0].get("momentum", 0)}
         logger.write(log)
-        
+
         if i % args.checkpoint_interval == 0 or i + 1 == args.epochs:
-            path = os.path.join(args.out, "epoch{}_{}.ckpt".format(i+1, args.log_name))
+            path = os.path.join(
+                args.out, "epoch{}_{}.ckpt".format(i+1, args.log_name))
             data = {"model": model.state_dict(),
                     "optimizer": optimizer.state_dict(),
                     "epoch": i + 1}
             torch.save(data, path)
-            
+
     print("=========== Test ===========")
     test_mse = validate(model, device, test_loader, optimizer, "Test")
     log = {"test_mse": test_mse}

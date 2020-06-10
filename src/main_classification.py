@@ -11,7 +11,6 @@ from torchsso.optim import SecondOrderOptimizer, VIOptimizer
 from torchsso.utils import Logger
 from torchvision import datasets, transforms
 
-
 DATASET_CIFAR10 = 'CIFAR-10'
 DATASET_CIFAR100 = 'CIFAR-100'
 DATASET_MNIST = 'MNIST'
@@ -281,7 +280,8 @@ def main():
         elif dirname == '.':
             module_path = os.path.basename(args.arch_file).replace(ext, '')
         else:
-            module_path = '.'.join(args.arch_file.split("/")[1:]).replace(ext, '')
+            module_path = '.'.join(
+                args.arch_file.split("/")[1:]).replace(ext, '')
         module = import_module(module_path)
         arch_class = getattr(module, args.arch_name)
 
@@ -308,9 +308,11 @@ def main():
     if args.scheduler_name is None:
         scheduler = None
     else:
-        scheduler_class = getattr(torchsso.optim.lr_scheduler, args.scheduler_name, None)
+        scheduler_class = getattr(
+            torchsso.optim.lr_scheduler, args.scheduler_name, None)
         if scheduler_class is None:
-            scheduler_class = getattr(torch.optim.lr_scheduler, args.scheduler_name)
+            scheduler_class = getattr(
+                torch.optim.lr_scheduler, args.scheduler_name)
         scheduler_kwargs = config["scheduler_args"]
         scheduler = scheduler_class(optimizer, **scheduler_kwargs)
 
@@ -345,7 +347,7 @@ def main():
         accuracy, loss, confidence = train(
             model, device, train_loader, optimizer, scheduler, epoch, args, config, logger)
         val_accuracy, val_loss = validate(model, device, val_loader, optimizer)
-        
+
         iteration = epoch * len(train_loader)
         log = {'epoch': epoch, 'iteration': iteration,
                'accuracy': accuracy, 'loss': loss, 'confidence': confidence,
@@ -363,7 +365,7 @@ def main():
                 'epoch': epoch
             }
             torch.save(data, path)
-        
+
 
 if __name__ == "__main__":
     main()
