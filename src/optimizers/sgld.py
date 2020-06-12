@@ -9,8 +9,14 @@ class SGLD(Optimizer):
     Barely modified version of pytorch SGD to implement SGLD
     """
 
-    def __init__(self, params, lr=required, addnoise=True):
-        defaults = dict(lr=lr, addnoise=addnoise)
+    def __init__(self, params, lr=required, addnoise=True, norm_sigma=0.5):
+        weight_decay = 1 / (norm_sigma ** 2)
+        if weight_decay < 0.0:
+            raise ValueError("Invalid weight_decay value: {}".format(weight_decay))
+        if lr is not required and lr < 0.0:
+            raise ValueError("Invalid learning rate: {}".format(lr))
+        defaults = dict(lr=lr, addnoise=addnoise, weight_decay=weight_decay)
+        
         super(SGLD, self).__init__(params, defaults)
 
     def step(self, lr=None, add_noise=False):
@@ -22,20 +28,21 @@ class SGLD(Optimizer):
         for group in self.param_groups:
             if lr:
                 group['lr'] = lr
+            weight_decay = group["weight_decay"]
             for p in group['params']:
                 if p.grad is None:
                     continue
                 d_p = p.grad.data
+                if weight_decay != 0:
+                    d_p.add_(weight_decay, p.data)
+                    
                 if group['addnoise']:
                     size = d_p.size()
-                    langevin_noise = Normal(
-                        torch.zeros(size),
-                        torch.ones(size) / np.sqrt(group['lr'])
-                    )
+                    langevin_noise = p.data.new(size).normal_(mean=0, std=1) / np.sqrt(group['lr'])
                     p.data.add_(-group['lr'],
-                                d_p + langevin_noise.sample().cuda())
+                                0.5 * d_p + langevin_noise)
                 else:
-                    p.data.add_(-group['lr'], d_p)
+                    p.data.add_(-group['lr'], 0.5 * d_p)
 
         return loss
 
