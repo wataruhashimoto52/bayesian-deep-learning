@@ -19,7 +19,7 @@ class SGLD(Optimizer):
         
         super(SGLD, self).__init__(params, defaults)
 
-    def step(self, lr=None, add_noise=False):
+    def step(self, lr=None, add_noise=True):
         """
         Performs a single optimization step.
         """
