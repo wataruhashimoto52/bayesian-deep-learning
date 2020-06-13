@@ -180,7 +180,7 @@ def main():
 
             x_batch = x_batch.to(device)
             y_batch = y_batch.to(device)
-
+            """
             def closure():
                 optimizer.zero_grad()
                 output = model(x_batch)
@@ -188,8 +188,12 @@ def main():
                 loss.backward()
 
                 return loss, output
-
-            loss, _ = optimizer.step(closure=closure)
+            """
+            optimizer.zero_grad()
+            output = model(x_batch)
+            loss = F.mse_loss(output, y_batch, reduction="sum").float()
+            loss.backward()
+            optimizer.step()
             losses += loss.item()
             if (minibatch_i + 1) % args.log_interval == 0:
                 print("Train Epoch: {} batch idx: {} elapsed time:  {:.1f}s MSE: {}".format(

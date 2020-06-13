@@ -2,3 +2,7 @@ logs
 .vscode
 notebooks
 tmp
+results/classification/*
+results/regression/*
+src/models/__pycache__
+src/optimizers/__pycache__
