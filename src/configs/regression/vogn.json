@@ -11,19 +11,19 @@
         "BatchNorm1d": "Diag",
         "BatchNorm2d": "Diag"
       },
-      "lr": 0.01,
+      "lr": 0.05,
       "grad_ema_decay": 0.1,
       "grad_ema_type": "raw",
       "num_mc_samples": 10,
-      "val_num_mc_samples": 0,
+      "val_num_mc_samples": 10,
       "kl_weighting": 1,
       "init_precision": 8e-3,
       "prior_variance": 1,
       "acc_steps": 1
     },
     "curv_args": {
-      "damping": 0,
-      "ema_decay": 0.001
+      "damping": 1e-7,
+      "ema_decay": 0.01
     },
     "scheduler_name": "ExponentialLR",
     "scheduler_args": {

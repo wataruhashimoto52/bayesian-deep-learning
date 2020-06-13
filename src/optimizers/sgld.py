@@ -9,7 +9,7 @@ class SGLD(Optimizer):
     Barely modified version of pytorch SGD to implement SGLD
     """
 
-    def __init__(self, params, lr=required, addnoise=True, norm_sigma=0.5):
+    def __init__(self, params, lr=np.float64(1e-3), addnoise=True, norm_sigma=0.5):
         weight_decay = 1 / (norm_sigma ** 2)
         if weight_decay < 0.0:
             raise ValueError("Invalid weight_decay value: {}".format(weight_decay))
@@ -19,11 +19,14 @@ class SGLD(Optimizer):
         
         super(SGLD, self).__init__(params, defaults)
 
-    def step(self, lr=None, add_noise=True):
+    def step(self, closure=None, lr=None, add_noise=True):
         """
         Performs a single optimization step.
         """
         loss = None
+        if closure is not None:
+            with torch.enable_grad():
+                loss = closure()
 
         for group in self.param_groups:
             if lr:

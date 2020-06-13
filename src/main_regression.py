@@ -20,7 +20,7 @@ from torchsso.utils import Logger
 from torchvision import datasets, transforms
 
 from models import Net
-from optimizers import *
+import optimizers
 
 torch.manual_seed(1234)
 
@@ -50,11 +50,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--datapath", type=str,
                         default="data/3droad.mat", help="dataset file")
-    parser.add_argument('--epochs', type=int, default=10,
+    parser.add_argument('--epochs', type=int, default=30,
                         help='number of epochs to train')
     parser.add_argument('--batch_size', type=int, default=1024,
                         help='input batch size for training')
-    parser.add_argument('--val_batch_size', type=int, default=128,
+    parser.add_argument('--val_batch_size', type=int, default=1024,
                         help='input batch size for valing')
     # Training Settings
     parser.add_argument('--arch_file', type=str, default=None,
@@ -63,7 +63,7 @@ def main():
                         help='name of the architecture')
     parser.add_argument('--arch_args', type=json.loads, default=None,
                         help='[JSON] arguments for the architecture')
-    parser.add_argument('--optim_name', type=str, default=SecondOrderOptimizer.__name__,
+    parser.add_argument('--optim_name', type=str, default=VIOptimizer.__name__,
                         help='name of the optimizer')
     parser.add_argument('--optim_args', type=json.loads, default=None,
                         help='[JSON] arguments for the optimizer')
@@ -86,7 +86,7 @@ def main():
                         help='how many epochs to wait before logging training status')
     parser.add_argument('--out', type=str, default='results/regression/',
                         help='dir to save output files')
-    parser.add_argument('--config', default='src/configs/regression/vogn.json',
+    parser.add_argument('--config', default=None,
                         help='config file path')
     parser.add_argument("--log_name", default=None, required=True, type=str,
                         help="log name")
@@ -152,8 +152,9 @@ def main():
         optimizer = VIOptimizer(model, dataset_size=len(train_loader.dataset), seed=args.seed,
                                 **config["optim_args"], curv_kwargs=config["curv_args"])
     else:
-        optim_class = getattr(torch.optim, args.optim_name)
-        optimizer = optim_class(model.parameters(), **optim_kwargs)
+        modules = import_module("optimizers")
+        optim_class = getattr(modules, args.optim_name)
+        optimizer = optim_class(model.parameters())
 
     if args.scheduler_name is None:
         scheduler = None
