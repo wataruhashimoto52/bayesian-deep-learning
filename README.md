@@ -1,4 +1,4 @@
-# Experiments on Inference Algorithms in Bayesian Neural Networks.
+# Inference Algorithms for Bayesian Deep Learning.
 
 ## Experiments
 * Classification (CIFAR-10, ImageNet, etc...)
