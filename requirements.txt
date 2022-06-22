@@ -1,6 +1,6 @@
 chainer==7.4.0
 cupy-cuda100
-numpy==1.18.1
+numpy==1.22.0
 scikit-learn==0.23.1
 scipy==1.4.1
 torch==1.4.0
